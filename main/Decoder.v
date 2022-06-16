@@ -26,14 +26,17 @@ module Decoder(
 					memwrite = 0;
 					memtoreg = 0;
 					dojump = 0;
-					case (funct)
-						6'b100001: alucontrol = // TODO // addition unsigned
-						6'b100011: alucontrol = // TODO // subtraction unsigned
-						6'b100100: alucontrol = // TODO // and
-						6'b100101: alucontrol = // TODO // or
-						6'b101011: alucontrol = // TODO // set-less-than unsigned
-						default:   alucontrol = // TODO // undefined
-					endcase
+						case (funct)
+							6'b100001: alucontrol = 3'b101; // addition
+							6'b100011: alucontrol = 3'b001; // substruction
+							6'b100100: alucontrol = 3'b111; // logical and
+							6'b100101: alucontrol = 3'b110; // logical or
+							6'b101011: alucontrol = 3'b000; // set less than
+							6'b010010: alucontrol = 3'b100; // multiplication
+							6'b010000,
+							6'b010010: alucontrol = {3'b01,funct[1]}; // mflo,mfhi (retrieves lo ,hi)
+							default:   alucontrol = 3'bx; // undefined //
+						endcase
 				end
 			6'b100011, // Load data word from memory
 			6'b101011: // Store data word
@@ -45,18 +48,19 @@ module Decoder(
 					memwrite = op[3];
 					memtoreg = 1;
 					dojump = 0;
-					alucontrol = // TODO // Effective address: Base register + offset
+					alucontrol = 3'b101;// TODO: check // Effective address: Base register + offset
 				end
+			6'b000101,
 			6'b000100: // Branch Equal
 				begin
 					regwrite = 0;
 					destreg = 5'bx;
 					alusrcbimm = 0;
-					dobranch = zero; // Equality test
+					dobranch = zero ^ op[0] ; // Equality test 
 					memwrite = 0;
 					memtoreg = 0;
 					dojump = 0;
-					alucontrol = // TODO // Subtraction
+					alucontrol =3'b001; // TODO: check // Subtraction
 				end
 			6'b001001: // Addition immediate unsigned
 				begin
@@ -67,7 +71,7 @@ module Decoder(
 					memwrite = 0;
 					memtoreg = 0;
 					dojump = 0;
-					alucontrol = // TODO // Addition
+					alucontrol = 3'b101; // TODO: check // Addition
 				end
 			6'b000010: // Jump immediate
 				begin
@@ -78,8 +82,48 @@ module Decoder(
 					memwrite = 0;
 					memtoreg = 0;
 					dojump = 1;
-					alucontrol = // TODO
+					alucontrol = 5'bx; // TODO : check 
 				end
+
+
+			//---------------------extended part---------------------
+			6'b001111: // Load Upper Immediate   lui $t1 111 -> 111 || 0**16 
+				begin //TODO : NEEDS TO BE IMPLEMENTED (FOR DAVID)
+					regwrite = 1;
+					destreg = instr[20:16];
+					alusrcbimm = 1;
+					dobranch = 0;
+					memwrite = 0;
+					memtoreg = 0;
+					dojump = 0;
+					alucontrol = 3'b110;
+				end
+			6'b001101: // Or Immediate (bitwise OR against an imm)
+				begin
+					regwrite = 1;
+					destreg = instr[20:16];
+					alusrcbimm = 1;
+					dobranch = 0;
+					memwrite = 0;
+					memtoreg = 0;
+					dojump = 0;
+					alucontrol = 3'b110;
+				end
+
+			/*6'b001101: // Or Immediate (bitwise OR against an imm)
+				begin
+					regwrite = 1;
+					destreg = instr[20:16];
+					alusrcbimm = 1;
+					dobranch = 0;
+					memwrite = 0;
+					memtoreg = 0;
+					dojump = 0;
+					alucontrol = 3'b110;
+				end*/
+			//---------------------extended part---------------------
+
+
 			default: // Default case
 				begin
 					regwrite = 1'bx;
@@ -89,7 +133,7 @@ module Decoder(
 					memwrite = 1'bx;
 					memtoreg = 1'bx;
 					dojump = 1'bx;
-					alucontrol = // TODO
+					alucontrol = 3'b010; // TODO
 				end
 		endcase
 	end

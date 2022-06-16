@@ -115,7 +115,43 @@ module ArithmeticLogicUnit(
 	output [31:0] result,
 	output        zero
 );
+reg [31:0] resreg;
+reg [31:0] HI ;
+reg [31:0] LO ;
+wire [63:0] prod;
+wire [31:0] wirehi;
+wire [31:0] wirelo;
 
-	// TODO Implementation of the ALU
+
+	//encoding of each operation for the alucontrol.
+	parameter
+				SLT = 3'b000,
+				SUB = 3'b001,
+				ADD = 3'b101, 
+				OR = 3'b110,
+				AND = 3'b111,
+				MFHI = 3'b010,
+				MFLO = 3'b010,
+				MUL = 3'b100;
+
+	//assigns the result of each operation to the result output. 
+	 always @* begin
+		case (alucontrol)
+			SLT:	resreg = a < b ? 1 : 0;
+			SUB: 	resreg = a - b;
+			ADD: 	resreg = a + b;
+			OR: 	resreg = a | b;
+			AND: 	resreg =  a & b;
+			MUL: 	{HI,LO} = a * b; //assigned to wire w/o an output.
+			MFLO:	resreg = wirelo;
+			MFHI: 	resreg = wirehi;
+		endcase
+	 end
+
+	//zero is 1 iff result is 32'b0.
+	assign wirehi = HI;
+	assign wirelo = LO;
+	assign result = resreg;
+	assign zero = result ? 0 : 1;
 
 endmodule

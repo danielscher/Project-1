@@ -28,8 +28,8 @@ module ProcessorTestbench();
 //			$readmemh("TestPrograms/FunctionCall.expected", expectedRegContent);
 //			$readmemh("TestPrograms/Constants.dat", proc.imem.INSTRROM, 0, 2);
 //			$readmemh("TestPrograms/Constants.expected", expectedRegContent);
-//			$readmemh("TestPrograms/Multiplication.dat", proc.imem.INSTRROM, 0, 4);
-//			$readmemh("TestPrograms/Multiplication.expected", expectedRegContent);
+			$readmemh("TestPrograms/Multiplication.dat", proc.imem.INSTRROM, 0, 4);
+			$readmemh("TestPrograms/Multiplication.expected", expectedRegContent);
 //			$readmemh("TestPrograms/Test_sltu_bne.dat", proc.imem.INSTRROM, 0, 6);
 //			$readmemh("TestPrograms/Test_sltu_bne.expected", expectedRegContent);
 

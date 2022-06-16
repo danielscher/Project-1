@@ -19,8 +19,8 @@ module DivisionTestbench();
 	Division divider(
 		.clock(clk),
 		.start(s),
-		.a(32'd7), // TODO Feel free to try out other values!
-		.b(32'd3),
+		.a(32'd999999937), // TODO Feel free to try out other values!
+		.b(32'd2),
 		.q(qres),
 		.r(rres)
 	);

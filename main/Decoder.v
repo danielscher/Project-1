@@ -35,7 +35,7 @@ module Decoder(
 							6'b010010: alucontrol = 3'b100; // multiplication
 							6'b010000,
 							6'b010010: alucontrol = {3'b01,funct[1]}; // mflo,mfhi (retrieves lo ,hi)
-							default:   alucontrol = 3'bx; // undefined //
+							default:   alucontrol = 3'bx; // undefined  //
 						endcase
 				end
 			6'b100011, // Load data word from memory

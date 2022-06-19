@@ -18,13 +18,33 @@ module Datapath(
 	wire [31:0] signimm;
 	wire [31:0] srca, srcb, srcbimm;
 	wire [31:0] result;
+	reg LUISrc;
+	wire [31:0] upperimm;
 
+	//LUI Control: check if opcode of LUI instr
+	always @* begin
+		if (instr[31:26] == 6'b001111) begin
+			LUISrc = 1;
+		end
+		else LUISrc = 0;
+	end
+	
 	// Fetch: Pass PC to instruction memory and update PC
 	ProgramCounter pcenv(clk, reset, dobranch, signimm, jump, instr[25:0], pc);
 
 	// Execute:
 	// (a) Select operand
 	SignExtension se(instr[15:0], signimm);
+
+	//instantiation of LUI
+	LoadUpperImmediate LUI (signimm, upperimm);
+
+	/*READ!: next line of code represents an additional MUX between the signimm and the mux for Srcbimm/Srcb
+	enabling it will cause the xxx value to be given to the LUI breaking everything. */	
+
+	//EXTENSION: if LUISrc is set signimm is upperimm
+	//assign signimm = LUISrc ? upperimm : signimm;
+
 	assign srcbimm = alusrcbimm ? signimm : srcb;
 	// (b) Perform computation in the ALU
 	ArithmeticLogicUnit alu(srca, srcbimm, alucontrol, aluout, zero);
@@ -37,6 +57,9 @@ module Datapath(
 	// Write-Back: Provide operands and write back the result
 	RegisterFile gpr(clk, regwrite, instr[25:21], instr[20:16],
 				   destreg, result, srca, srcb);
+
+	
+	
 endmodule
 
 module ProgramCounter(
@@ -107,6 +130,7 @@ module SignExtension(
 	output [31:0] y
 );
 	assign y = {{16{a[15]}}, a};
+	initial $display("imm : %b \n signed immediate:%b",a,y);
 endmodule
 
 module ArithmeticLogicUnit(
@@ -142,16 +166,28 @@ wire [31:0] wirelo;
 			ADD: 	resreg = a + b;
 			OR: 	resreg = a | b;
 			AND: 	resreg =  a & b;
-			MUL: 	{HI,LO} = a * b; //assigned to wire w/o an output.
-			MFLO:	resreg = wirelo;
-			MFHI: 	resreg = wirehi;
+			MUL: 	{HI,LO} = a * b; //stores two halves of prod in HI,LO
+			MFLO:	resreg = wirelo; //connects LO to output.
+			MFHI: 	resreg = wirehi; //connect HI to output.
 		endcase
 	 end
 
-	//zero is 1 iff result is 32'b0.
+	//connects HI,LO regs to respc. wires
 	assign wirehi = HI;
 	assign wirelo = LO;
+	//connect the result reg to the result output
 	assign result = resreg;
+	//zero is 1 iff result is 32'b0.
 	assign zero = result ? 0 : 1;
+
+endmodule
+module LoadUpperImmediate (
+	input [31:0] signimm,
+	output [31:0] upperimm
+);
+	reg [31:0] res;
+	//concatenates 16 zero to the unsigned imm. 
+	assign upperimm = {signimm[15:0], {16{1'b0}}};
+	initial $display("upper immediate:%b",upperimm);
 
 endmodule

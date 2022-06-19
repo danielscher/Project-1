@@ -32,10 +32,10 @@ module Decoder(
 							6'b100100: alucontrol = 3'b111; // logical and
 							6'b100101: alucontrol = 3'b110; // logical or
 							6'b101011: alucontrol = 3'b000; // set less than
-							6'b010010: alucontrol = 3'b100; // multiplication
+							6'b011001: alucontrol = 3'b100; // multiplication
 							6'b010000,
 							6'b010010: alucontrol = {3'b01,funct[1]}; // mflo,mfhi (retrieves lo ,hi)
-							default:   alucontrol = 3'bx; // undefined //
+							default:   alucontrol = 3'b101; // undefined //
 						endcase
 				end
 			6'b100011, // Load data word from memory
@@ -88,7 +88,7 @@ module Decoder(
 
 			//---------------------extended part---------------------
 			6'b001111: // Load Upper Immediate   lui $t1 111 -> 111 || 0**16 
-				begin //TODO : NEEDS TO BE IMPLEMENTED (FOR DAVID)
+				begin 
 					regwrite = 1;
 					destreg = instr[20:16];
 					alusrcbimm = 1;
@@ -96,7 +96,7 @@ module Decoder(
 					memwrite = 0;
 					memtoreg = 0;
 					dojump = 0;
-					alucontrol = 3'b110;
+					alucontrol = 3'b101;
 				end
 			6'b001101: // Or Immediate (bitwise OR against an imm)
 				begin
@@ -109,18 +109,6 @@ module Decoder(
 					dojump = 0;
 					alucontrol = 3'b110;
 				end
-
-			/*6'b001101: // Or Immediate (bitwise OR against an imm)
-				begin
-					regwrite = 1;
-					destreg = instr[20:16];
-					alusrcbimm = 1;
-					dobranch = 0;
-					memwrite = 0;
-					memtoreg = 0;
-					dojump = 0;
-					alucontrol = 3'b110;
-				end*/
 			//---------------------extended part---------------------
 
 
@@ -133,7 +121,7 @@ module Decoder(
 					memwrite = 1'bx;
 					memtoreg = 1'bx;
 					dojump = 1'bx;
-					alucontrol = 3'b010; // TODO
+					alucontrol = 3'b101; // TODO
 				end
 		endcase
 	end

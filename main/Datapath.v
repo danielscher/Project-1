@@ -42,10 +42,8 @@ module Datapath(
 	/*READ!: next line of code represents an additional MUX between the signimm and the mux for Srcbimm/Srcb
 	enabling it will cause the xxx value to be given to the LUI breaking everything. */	
 
-	//EXTENSION: if LUISrc is set signimm is upperimm
-	//assign signimm = LUISrc ? upperimm : signimm;
-
-	assign srcbimm = alusrcbimm ? signimm : srcb;
+	//EXTENSION: if LUISrc is set to 1 and alusrcbimm then alu gets the upperimm otherwise the signimm or the rd2.
+	assign srcbimm = alusrcbimm ? (LUISrc ? upperimm : signimm) : srcb;
 	// (b) Perform computation in the ALU
 	ArithmeticLogicUnit alu(srca, srcbimm, alucontrol, aluout, zero);
 	// (c) Select the correct result
@@ -130,7 +128,6 @@ module SignExtension(
 	output [31:0] y
 );
 	assign y = {{16{a[15]}}, a};
-	initial $display("imm : %b \n signed immediate:%b",a,y);
 endmodule
 
 module ArithmeticLogicUnit(
@@ -188,6 +185,4 @@ module LoadUpperImmediate (
 	reg [31:0] res;
 	//concatenates 16 zero to the unsigned imm. 
 	assign upperimm = {signimm[15:0], {16{1'b0}}};
-	initial $display("upper immediate:%b",upperimm);
-
 endmodule

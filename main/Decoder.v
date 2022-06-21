@@ -109,6 +109,17 @@ module Decoder(
 					dojump = 0;
 					alucontrol = 3'b110;
 				end
+			6'b000011: //Jump and Link (jal)
+				begin
+					regwrite = 1;
+					destreg = 5'd31; // stores current pc on reg #31
+					alusrcbimm = 0;
+					dobranch = 0;
+					memwrite = 0;
+					memtoreg = 0;
+					dojump = 1;
+					alucontrol = 5'bx;
+				end
 			//---------------------extended part---------------------
 
 

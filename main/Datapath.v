@@ -47,7 +47,8 @@ module Datapath(
 	// (b) Perform computation in the ALU
 	ArithmeticLogicUnit alu(srca, srcbimm, alucontrol, aluout, zero);
 	// (c) Select the correct result
-	assign result = memtoreg ? readdata : aluout;
+	//EXTENSION: if memtoreg and jump are sets takes the next pc.
+	assign result = memtoreg ? readdata : (jump ? pc : aluout);
 
 	// Memory: Data word that is transferred to the data memory for (possible) storage
 	assign writedata = srcb;

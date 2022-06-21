@@ -152,7 +152,7 @@ wire [31:0] wirelo;
 				OR = 3'b110,
 				AND = 3'b111,
 				MFHI = 3'b010,
-				MFLO = 3'b010,
+				MFLO = 3'b011,
 				MUL = 3'b100;
 
 	//assigns the result of each operation to the result output. 

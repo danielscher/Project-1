@@ -14,12 +14,15 @@ module Datapath(
 	output [31:0] writedata,
 	input  [31:0] readdata
 );
-	wire [31:0] pc;
+	//wire [31:0] pc;
 	wire [31:0] signimm;
 	wire [31:0] srca, srcb, srcbimm;
 	wire [31:0] result;
+	//
 	reg LUISrc;
 	wire [31:0] upperimm;
+	reg ResultSrc = 0 ;
+	wire [31:0] pcx;
 
 	//LUI Control: check if opcode of LUI instr
 	always @* begin
@@ -28,19 +31,14 @@ module Datapath(
 		end
 		else LUISrc = 0;
 	end
-	
 	// Fetch: Pass PC to instruction memory and update PC
-	ProgramCounter pcenv(clk, reset, dobranch, signimm, jump, instr[25:0], pc);
-
+	ProgramCounter pcenv(clk, reset, dobranch, signimm, jump, instr[25:0],pcx);
 	// Execute:
 	// (a) Select operand
 	SignExtension se(instr[15:0], signimm);
 
 	//instantiation of LUI
-	LoadUpperImmediate LUI (signimm, upperimm);
-
-	/*READ!: next line of code represents an additional MUX between the signimm and the mux for Srcbimm/Srcb
-	enabling it will cause the xxx value to be given to the LUI breaking everything. */	
+	LoadUpperImmediate LUI (signimm, upperimm);	
 
 	//EXTENSION: if LUISrc is set to 1 and alusrcbimm then alu gets the upperimm otherwise the signimm or the rd2.
 	assign srcbimm = alusrcbimm ? (LUISrc ? upperimm : signimm) : srcb;
@@ -48,7 +46,7 @@ module Datapath(
 	ArithmeticLogicUnit alu(srca, srcbimm, alucontrol, aluout, zero);
 	// (c) Select the correct result
 	//EXTENSION: if memtoreg and jump are sets takes the next pc.
-	assign result = memtoreg ? readdata : (jump ? pc : aluout);
+	assign result = memtoreg ? readdata : (jump ? (pc+4) : aluout);
 
 	// Memory: Data word that is transferred to the data memory for (possible) storage
 	assign writedata = srcb;
@@ -56,6 +54,21 @@ module Datapath(
 	// Write-Back: Provide operands and write back the result
 	RegisterFile gpr(clk, regwrite, instr[25:21], instr[20:16],
 				   destreg, result, srca, srcb);
+
+	always @(posedge clk) begin
+		if (instr[31:26] == 6'b0)begin
+			//$display("first 6bits are zero");
+			if (instr[5:0] == 6'b001000) begin
+				//$display("last 6bits are jr");
+				ResultSrc = 1;
+			end
+		end 
+		else ResultSrc = 0;
+		$display("%d,the current op:%b, the current func:%b",ResultSrc,instr[31:26],instr[5:0]);
+	end
+	assign pc = ResultSrc ? srca : pcx;
+	
+
 
 	
 	

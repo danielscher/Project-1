@@ -18,11 +18,11 @@ module Datapath(
 	wire [31:0] signimm;
 	wire [31:0] srca, srcb, srcbimm;
 	wire [31:0] result;
-	//
+	
+	//necessary for the extension of the datapath.
 	reg LUISrc;
 	wire [31:0] upperimm;
-	reg ResultSrc = 0 ;
-	wire [31:0] pcx;
+	wire JR;
 
 	//LUI Control: check if opcode of LUI instr
 	always @* begin
@@ -31,8 +31,14 @@ module Datapath(
 		end
 		else LUISrc = 0;
 	end
+
+	//Jump Register Control unit
+	//controls the jumptarget in case of a JR.
+	//since decoder doesn't handle the jumptarget.  
+	JRControl jrc(instr,JR);
+
 	// Fetch: Pass PC to instruction memory and update PC
-	ProgramCounter pcenv(clk, reset, dobranch, signimm, jump, instr[25:0],pcx);
+	ProgramCounter pcenv(clk, reset, dobranch, signimm, jump, (JR ? srca[27:2] : instr[25:0]),pc);
 	// Execute:
 	// (a) Select operand
 	SignExtension se(instr[15:0], signimm);
@@ -55,22 +61,6 @@ module Datapath(
 	RegisterFile gpr(clk, regwrite, instr[25:21], instr[20:16],
 				   destreg, result, srca, srcb);
 
-	always @(posedge clk) begin
-		if (instr[31:26] == 6'b0)begin
-			//$display("first 6bits are zero");
-			if (instr[5:0] == 6'b001000) begin
-				//$display("last 6bits are jr");
-				ResultSrc = 1;
-			end
-		end 
-		else ResultSrc = 0;
-		$display("%d,the current op:%b, the current func:%b",ResultSrc,instr[31:26],instr[5:0]);
-	end
-	assign pc = ResultSrc ? srca : pcx;
-	
-
-
-	
 	
 endmodule
 
@@ -199,4 +189,12 @@ module LoadUpperImmediate (
 	reg [31:0] res;
 	//concatenates 16 zero to the unsigned imm. 
 	assign upperimm = {signimm[15:0], {16{1'b0}}};
+endmodule
+module JRControl (
+	input [31:0] instr,
+	output JR
+);
+
+assign JR = (instr[5:0] == 6'b001000);
+	
 endmodule

@@ -28,17 +28,20 @@ module Division(
         enable = 0;
     end
 
-    always @(posedge start) begin 
+//    always @(posedge start) begin 
+    always @(posedge clock && start) begin
         enable = 1;
         sharedReg = a;
+        i = 31;
     end
 
-    always @(posedge clock && enable) begin
-        if (!b || i == 0) begin
+//    always @(posedge clock && enable) begin
+    always @(posedge clock && (i < 32)) begin
+/*        if (!b || i == 0) begin
 			enable = 0;
 			// $finish; 
 		end
-
+*/
         
 //        r_curr = rx << 1;
         r_curr = r_curr << 1;

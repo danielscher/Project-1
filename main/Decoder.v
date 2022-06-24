@@ -32,9 +32,9 @@ module Decoder(
 							6'b100100: alucontrol = 3'b111; // logical and
 							6'b100101: alucontrol = 3'b110; // logical or
 							6'b101011: alucontrol = 3'b000; // set less than
-							6'b011001: alucontrol = 3'b100; // multiplication
-							6'b010000,
-							6'b010010: alucontrol = {3'b01,funct[1]}; // mflo,mfhi (retrieves lo ,hi)
+							//6'b011001: alucontrol = 3'b100; // multiplication
+							//6'b010000,
+							//6'b010010: alucontrol = {3'b01,funct[1]}; // mflo,mfhi (retrieves lo ,hi)
 							default:   alucontrol = 3'b101; // undefined //
 						endcase
 				end

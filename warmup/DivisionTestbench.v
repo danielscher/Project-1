@@ -19,8 +19,8 @@ module DivisionTestbench();
 	Division divider(
 		.clock(clk),
 		.start(s),
-		.a(32'd999999937), // TODO Feel free to try out other values!
-		.b(32'd2),
+		.a(32'd14), // TODO Feel free to try out other values!
+		.b(32'd3),
 		.q(qres),
 		.r(rres)
 	);
@@ -32,7 +32,7 @@ module DivisionTestbench();
 		$dumpfile("divsim.vcd");
 		$dumpvars;
 		#133;
-		if (qres == 32'd2 && rres == 32'd1)
+		if (qres == 32'd4 && rres == 32'd2)
 			$display("Simulation succeeded");
 		else
 			$display("Simulation failed");

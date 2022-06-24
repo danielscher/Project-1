@@ -20,6 +20,7 @@ module Division(
 		i = n;
 //        i = -1;
         rx = 0;
+        r_curr = 0;
         qx = 0;
         sharedReg = 0;
         R = 0;
@@ -39,19 +40,21 @@ module Division(
 		end
 
         
-        r_curr = rx << 1;
+//        r_curr = rx << 1;
+        r_curr = r_curr << 1;
 //		r_curr = r_curr + a[i];
 		r_curr = r_curr + sharedReg[i];
 
         if (r_curr < b) begin
 //            qx[i] = 0;
             sharedReg[i] = 0;
-            rx = r_curr;
+//            rx = r_curr;
 			//$display("q = 0");
         end else begin
 //            qx[i] = 1;
             sharedReg[i] = 1;
-            rx = r_curr - b;
+//            rx = r_curr - b;
+            r_curr = r_curr - b;
 			//$display("q = 1");
 
         end
@@ -59,8 +62,8 @@ module Division(
     end
 //	assign q = qx;
     assign q = sharedReg;
-    assign r = rx;
-
+//    assign r = rx;
+    assign r = r_curr;
 
 
 /*

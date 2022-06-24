@@ -1,6 +1,62 @@
-addiu $1, $0, 1
-addiu $2, $0, 456
-divu $1, $2
-...
-mflo $3
-mfhi $4
+addiu $1, $0, 8
+addiu $2, $0, 2
+divu $t1, $t2
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+addiu $t1, $0, 0
+mfhi $t3
+mflo $t4

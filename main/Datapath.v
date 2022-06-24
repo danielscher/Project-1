@@ -262,7 +262,6 @@ module DivALUController (
 	output [1:0] DIVUControl,
 	output DivALUMuxOut
 );
-	//assign DIVUControl = (inst[31:26] == 0 && InstrIn[5:0] == 011011) ? 2'b0 : ((inst[31:26] == 0 && InstrIn[5:0] == 6'b010000) ? 2'b11 : (((inst[31:26] == 0 && InstrIn[5:0] == 6'b010010) ? 2'b01) : 2'bxx));
-	assign DIVUControl = (InstrIn[31:26] == 0 && InstrIn[5:0] == 011011) ? 2'b0 : ((InstrIn[31:26] == 0 && InstrIn[5:0] == 6'b010000) ? 2'b11 : ((InstrIn[31:26] == 0 && InstrIn[5:0] == 6'b010010) ? 2'b01 :  2'bxx));
-	assign DivALUMuxOut = ((InstrIn[31:26] == 0 && InstrIn[5:0] == 6'b010000) || (InstrIn[31:26] == 0 && InstrIn[5:0] == 6'b010010)) ? 1 : 0;
+	assign DIVUControl = (InstrIn[31:26] == 6'b000000 && InstrIn[5:0] == 6'b011011) ? 2'b00 : ((InstrIn[31:26] == 6'b000000 && InstrIn[5:0] == 6'b010000) ? 2'b11 : ((InstrIn[31:26] == 6'b000000 && InstrIn[5:0] == 6'b010010) ? 2'b01 :  2'bxx));
+	assign DivALUMuxOut = ((InstrIn[31:26] == 6'b000000 && InstrIn[5:0] == 6'b010000) || (InstrIn[31:26] == 6'b000000 && InstrIn[5:0] == 6'b010010)) ? 6'b01 : 6'b00;
 endmodule

@@ -24,7 +24,7 @@ module Division(
     always @(posedge clock && enable) begin
 		if (!b || i == -1) begin
 			enable = 0;
-			$finish; 
+			// $finish; 
 		end
         r_curr = rx << 1;
 		r_curr = r_curr + a[i];

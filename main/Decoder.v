@@ -17,19 +17,6 @@ module Decoder(
 	always @*
 	begin
 		case (op)
-			6'b000000: // Extension of the R-type instructions for JR.
-				begin
-					regwrite = 0;
-					destreg = instr[15:11];
-					alusrcbimm = 0;
-					dobranch = 0;
-					memwrite = 0;
-					memtoreg = 0;
-					alucontrol = 3'b101;
-						case (funct)
-							6'b001000: dojump = 1;
-						endcase
-				end
 			6'b000000: // R-type instruction
 				begin
 					regwrite = 1;
@@ -38,7 +25,7 @@ module Decoder(
 					dobranch = 0;
 					memwrite = 0;
 					memtoreg = 0;
-					dojump = 0;
+					dojump = (funct == 6'b001000) ? 1 : 0;
 						case (funct)
 							6'b100001: alucontrol = 3'b101; // addition
 							6'b100011: alucontrol = 3'b001; // substruction

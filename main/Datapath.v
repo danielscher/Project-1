@@ -52,7 +52,7 @@ module Datapath(
 	ArithmeticLogicUnit alu(srca, srcbimm, alucontrol, aluout, zero);
 	// (c) Select the correct result
 	//EXTENSION: if memtoreg and jump are sets takes the next pc.
-	assign result = memtoreg ? readdata : (jump ? (pc+4) : aluout);
+	assign result = memtoreg ? readdata : (jump ? (pc+4) : (ALUMuxWire) ? DivOutWire : aluout); // modified this line to chose between divalu out and alu out
 
 	// Memory: Data word that is transferred to the data memory for (possible) storage
 	assign writedata = srcb;
@@ -61,8 +61,21 @@ module Datapath(
 	RegisterFile gpr(clk, regwrite, instr[25:21], instr[20:16],
 				   destreg, result, srca, srcb);
 
+
+	// first attempt to implement divu
+	wire [1:0] DivControlWire;
+	wire ALUMuxWire;
+	wire [31:0] DivOutWire;
+	DivALU DivCirc(srca, srcb, DivControlWire, clk, DivOutWire);
+	DivALUController DivController(instr, DivControlWire, ALUMuxWire);
+
+
 	
 endmodule
+
+
+
+
 
 module ProgramCounter(
 	input         clk,
@@ -197,4 +210,59 @@ module JRControl (
 
 assign JR = (instr[5:0] == 6'b001000);
 	
+endmodule
+
+module DivALU (
+	input [31:0] a,
+	input [31:0] b,
+	input [1:0] control,
+	input clk,
+	output [31:0] out
+);
+	reg [31:0] ain, bin, qlo, rhi;
+	initial begin
+		ain <= a;
+		bin <= b;
+		qlo <= 0;
+		rhi <= 0;
+	end
+
+	reg start;
+
+	always @(posedge clk) begin
+		case (control)
+			2'b00: begin
+				ain <= a;
+				bin <= b;
+				start <= 1;
+			end
+		endcase
+		
+	end
+
+	assign out = (control == 2'b01) ? rhi : qlo;
+	
+	assign ainwire = ain;
+	assign binwire = bin;
+	
+	always @* begin
+		qlo <= qlowire;
+		rhi <= rhiwire;
+	end
+	
+
+	wire [31:0] ainwire, binwire, qlowire, rhiwire;
+	Division div(clk, start, ainwire, binwire, qlowire, rhiwire);
+
+endmodule
+
+
+module DivALUController (
+	input [31:0] InstrIn,
+	output [1:0] DIVUControl,
+	output DivALUMuxOut
+);
+	//assign DIVUControl = (inst[31:26] == 0 && InstrIn[5:0] == 011011) ? 2'b0 : ((inst[31:26] == 0 && InstrIn[5:0] == 6'b010000) ? 2'b11 : (((inst[31:26] == 0 && InstrIn[5:0] == 6'b010010) ? 2'b01) : 2'bxx));
+	assign DIVUControl = (InstrIn[31:26] == 0 && InstrIn[5:0] == 011011) ? 2'b0 : ((InstrIn[31:26] == 0 && InstrIn[5:0] == 6'b010000) ? 2'b11 : ((InstrIn[31:26] == 0 && InstrIn[5:0] == 6'b010010) ? 2'b01 :  2'bxx));
+	assign DivALUMuxOut = ((InstrIn[31:26] == 0 && InstrIn[5:0] == 6'b010000) || (InstrIn[31:26] == 0 && InstrIn[5:0] == 6'b010010)) ? 1 : 0;
 endmodule

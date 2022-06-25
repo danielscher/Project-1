@@ -32,10 +32,7 @@ module Decoder(
 							6'b100100: alucontrol = 3'b111; // logical and
 							6'b100101: alucontrol = 3'b110; // logical or
 							6'b101011: alucontrol = 3'b000; // set less than
-							//6'b011001: alucontrol = 3'b100; // multiplication
-							//6'b010000,
-							//6'b010010: alucontrol = {3'b01,funct[1]}; // mflo,mfhi (retrieves lo ,hi)
-							default:   alucontrol = 3'b101; // undefined //
+							default:   alucontrol = 3'b101; // addition //
 						endcase
 				end
 			6'b100011, // Load data word from memory
@@ -48,9 +45,9 @@ module Decoder(
 					memwrite = op[3];
 					memtoreg = 1;
 					dojump = 0;
-					alucontrol = 3'b101;// TODO: check // Effective address: Base register + offset
+					alucontrol = 3'b101;// Effective address: Base register + offset
 				end
-			6'b000101,
+			6'b000101, // Branch not equal
 			6'b000100: // Branch Equal
 				begin
 					regwrite = 0;
@@ -60,7 +57,7 @@ module Decoder(
 					memwrite = 0;
 					memtoreg = 0;
 					dojump = 0;
-					alucontrol =3'b001; // Subtraction
+					alucontrol = 3'b001; // Subtraction
 				end
 			6'b001001: // Addition immediate unsigned
 				begin
@@ -132,7 +129,7 @@ module Decoder(
 					memwrite = 1'bx;
 					memtoreg = 1'bx;
 					dojump = 1'bx;
-					alucontrol = 3'b101; // TODO
+					alucontrol = 3'b101;
 				end
 		endcase
 	end

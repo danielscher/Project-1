@@ -11,18 +11,21 @@ module Division(
     reg [31:0] i;
     reg [31:0] sharedReg;
     reg [31:0] B;
+    reg [31:0] A;
     
     initial begin
 		i = n;
         r_curr = 0;
         sharedReg = 0;
-        B = b;
+        //B = b;
     end
 
     always @(posedge clock && start) begin
         sharedReg = a;
         i = 31;
         B = b;
+        A = a;
+        r_curr = 0;
     end
 
     always @(posedge clock && (i < 32)) begin

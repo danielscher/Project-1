@@ -324,7 +324,7 @@ module Division(
         r_curr = 0;
         sharedReg = 0;
 		busy = 0;
-        //B = b;
+
     end
 
     always @(posedge clock && start) begin

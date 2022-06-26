@@ -1,3 +1,4 @@
+![cpu](/cpu+LUI.png?raw=true)
 # 1-cycle-MIPS-processor
 MIPS 32-bit Processor.
 Current implementation supports pre-Release 6 instructions.
